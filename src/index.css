@@ -1,6 +1,10 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;500;600;700&display=swap');
 
 @layer base {
   :root {
@@ -35,19 +39,12 @@
     --radius: 0.5rem;
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
@@ -96,6 +93,84 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-terminal-bg text-terminal-green font-mono;
+    font-family: 'IBM Plex Mono', 'Courier New', monospace;
+    background-color: #000000;
+    color: #00FF41;
+  }
+
+  /* Terminal-specific styles */
+  .terminal-border {
+    border: 1px solid #00FF41;
+    box-shadow: 0 0 4px rgba(0, 255, 65, 0.3);
+  }
+
+  .terminal-glow {
+    text-shadow: 0 0 8px currentColor;
+  }
+
+  .scanlines {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .scanlines::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      transparent 50%, 
+      rgba(0, 255, 65, 0.03) 50%
+    );
+    background-size: 100% 4px;
+    pointer-events: none;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #111111;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #00FF41;
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #00CC33;
+  }
+}
+
+@layer components {
+  .terminal-grid {
+    background-image: 
+      linear-gradient(rgba(0, 255, 65, 0.1) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 255, 65, 0.1) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+
+  .terminal-button {
+    @apply bg-terminal-bg border border-terminal-green text-terminal-green 
+           hover:bg-terminal-green hover:text-terminal-bg 
+           transition-all duration-200 font-mono text-sm
+           px-4 py-2 uppercase tracking-wider;
+  }
+
+  .terminal-input {
+    @apply bg-terminal-bg border border-terminal-green text-terminal-green 
+           placeholder-terminal-grey focus:border-terminal-amber
+           font-mono text-sm px-3 py-2;
+  }
+
+  .terminal-card {
+    @apply bg-terminal-bg-light border border-terminal-green/30 
+           p-4 font-mono text-sm;
   }
 }

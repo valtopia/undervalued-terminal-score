@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,12 +62,28 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				terminal: {
+					bg: '#000000',
+					'bg-light': '#111111',
+					green: '#00FF41',
+					amber: '#FFBE00',
+					orange: '#FF8C00',
+					red: '#FF073A',
+					blue: '#00BFFF',
+					purple: '#DA70D6',
+					grey: '#808080',
+					'grey-light': '#A0A0A0'
 				}
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',
 				sm: 'calc(var(--radius) - 4px)'
+			},
+			fontFamily: {
+				mono: ['IBM Plex Mono', 'Courier New', 'monospace'],
+				terminal: ['Source Code Pro', 'Courier New', 'monospace']
 			},
 			keyframes: {
 				'accordion-down': {
@@ -84,11 +101,21 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				blink: {
+					'0%, 50%': { opacity: '1' },
+					'51%, 100%': { opacity: '0' }
+				},
+				'pulse-green': {
+					'0%, 100%': { boxShadow: '0 0 4px #00FF41' },
+					'50%': { boxShadow: '0 0 8px #00FF41, 0 0 16px #00FF41' }
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				blink: 'blink 1s infinite',
+				'pulse-green': 'pulse-green 2s infinite'
 			}
 		}
 	},
