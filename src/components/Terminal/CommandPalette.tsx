@@ -1,45 +1,59 @@
 
 import React, { useState, useEffect } from 'react';
-import { Search, TrendingUp, BarChart3, Bell, DollarSign } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Search, TrendingUp, BarChart3, Bell, Settings, X } from 'lucide-react';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 
 interface CommandPaletteProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-const commands = [
-  { id: 'dashboard', label: 'Go to Dashboard', icon: TrendingUp, shortcut: 'D' },
-  { id: 'analytics', label: 'View Analytics', icon: BarChart3, shortcut: 'A' },
-  { id: 'alerts', label: 'Check Alerts', icon: Bell, shortcut: 'L' },
-  { id: 'pricing', label: 'View Pricing', icon: DollarSign, shortcut: 'P' },
+interface Command {
+  type: 'command';
+  id: string;
+  label: string;
+  icon: React.ComponentType<{ className?: string }>;
+  shortcut: string;
+}
+
+interface Stock {
+  type: 'stock';
+  symbol: string;
+  company: string;
+  score: number;
+}
+
+type CommandItem = Command | Stock;
+
+const commands: Command[] = [
+  { type: 'command', id: 'dashboard', label: 'Go to Dashboard', icon: TrendingUp, shortcut: 'D' },
+  { type: 'command', id: 'analytics', label: 'View Analytics', icon: BarChart3, shortcut: 'A' },
+  { type: 'command', id: 'alerts', label: 'Manage Alerts', icon: Bell, shortcut: 'L' },
+  { type: 'command', id: 'settings', label: 'Open Settings', icon: Settings, shortcut: 'S' },
 ];
 
-const popularTickers = [
-  { symbol: 'AAPL', company: 'Apple Inc.', score: 7.8 },
-  { symbol: 'MSFT', company: 'Microsoft Corporation', score: 8.2 },
-  { symbol: 'GOOGL', company: 'Alphabet Inc.', score: 6.9 },
-  { symbol: 'TSLA', company: 'Tesla Inc.', score: 5.4 },
-  { symbol: 'AMZN', company: 'Amazon.com Inc.', score: 7.1 },
+const stocks: Stock[] = [
+  { type: 'stock', symbol: 'MSFT', company: 'Microsoft Corporation', score: 8.7 },
+  { type: 'stock', symbol: 'GOOGL', company: 'Alphabet Inc.', score: 8.4 },
+  { type: 'stock', symbol: 'BRK.B', company: 'Berkshire Hathaway', score: 8.1 },
+  { type: 'stock', symbol: 'JNJ', company: 'Johnson & Johnson', score: 7.9 },
 ];
 
 export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose }) => {
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
 
-  const filteredCommands = commands.filter(cmd =>
-    cmd.label.toLowerCase().includes(query.toLowerCase())
-  );
+  const allItems: CommandItem[] = [...commands, ...stocks];
 
-  const filteredTickers = popularTickers.filter(ticker =>
-    ticker.symbol.toLowerCase().includes(query.toLowerCase()) ||
-    ticker.company.toLowerCase().includes(query.toLowerCase())
-  );
-
-  const allResults = [
-    ...filteredCommands.map(cmd => ({ ...cmd, type: 'command' })),
-    ...filteredTickers.map(ticker => ({ ...ticker, type: 'ticker' }))
-  ];
+  const filteredItems = allItems.filter(item => {
+    if (item.type === 'command') {
+      return item.label.toLowerCase().includes(query.toLowerCase()) ||
+             item.id.toLowerCase().includes(query.toLowerCase());
+    } else {
+      return item.symbol.toLowerCase().includes(query.toLowerCase()) ||
+             item.company.toLowerCase().includes(query.toLowerCase());
+    }
+  });
 
   useEffect(() => {
     if (!isOpen) {
@@ -49,116 +63,101 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
   }, [isOpen]);
 
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (!isOpen) return;
+    setSelectedIndex(0);
+  }, [query]);
 
-      switch (e.key) {
-        case 'Escape':
-          onClose();
-          break;
-        case 'ArrowDown':
-          e.preventDefault();
-          setSelectedIndex(prev => Math.min(prev + 1, allResults.length - 1));
-          break;
-        case 'ArrowUp':
-          e.preventDefault();
-          setSelectedIndex(prev => Math.max(prev - 1, 0));
-          break;
-        case 'Enter':
-          e.preventDefault();
-          if (allResults[selectedIndex]) {
-            console.log('Selected:', allResults[selectedIndex]);
-            onClose();
-          }
-          break;
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setSelectedIndex(prev => Math.min(prev + 1, filteredItems.length - 1));
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setSelectedIndex(prev => Math.max(prev - 1, 0));
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      if (filteredItems[selectedIndex]) {
+        console.log('Selected:', filteredItems[selectedIndex]);
+        onClose();
       }
-    };
-
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, selectedIndex, allResults, onClose]);
+    } else if (e.key === 'Escape') {
+      onClose();
+    }
+  };
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-start justify-center pt-20 z-50">
-      <div className="bg-terminal-bg border border-terminal-green w-full max-w-lg mx-4">
-        {/* Header */}
-        <div className="border-b border-terminal-green/30 p-3">
-          <div className="flex items-center space-x-2">
-            <span className="text-terminal-green">$</span>
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="bg-terminal-bg border-terminal-green/50 p-0 max-w-2xl">
+        <div className="border-b border-terminal-green/30">
+          <div className="flex items-center p-4">
+            <Search className="h-5 w-5 text-terminal-green mr-3" />
             <input
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search tickers, commands..."
+              onKeyDown={handleKeyDown}
+              placeholder="Search commands or tickers..."
               className="flex-1 bg-transparent text-terminal-green placeholder-terminal-grey 
-                       outline-none font-mono text-sm"
+                       font-mono focus:outline-none"
               autoFocus
             />
-            <div className="text-xs text-terminal-grey">
-              ESC to close
-            </div>
+            <button onClick={onClose} className="text-terminal-grey hover:text-terminal-green">
+              <X className="h-5 w-5" />
+            </button>
           </div>
         </div>
 
-        {/* Results */}
-        <div className="max-h-80 overflow-y-auto">
-          {allResults.length === 0 ? (
-            <div className="p-4 text-center text-terminal-grey">
+        <div className="max-h-96 overflow-y-auto">
+          {filteredItems.length === 0 ? (
+            <div className="p-4 text-terminal-grey font-mono text-center">
               No results found
             </div>
           ) : (
             <div className="p-2">
-              {allResults.map((result, index) => (
+              {filteredItems.map((item, index) => (
                 <div
-                  key={`${result.type}-${index}`}
-                  className={cn(
-                    "flex items-center justify-between p-2 rounded cursor-pointer",
+                  key={item.type === 'command' ? item.id : item.symbol}
+                  className={`flex items-center justify-between p-3 rounded cursor-pointer font-mono ${
                     index === selectedIndex 
-                      ? "bg-terminal-green/10 border border-terminal-green/30" 
-                      : "hover:bg-terminal-green/5"
-                  )}
-                  onClick={() => {
-                    console.log('Clicked:', result);
-                    onClose();
-                  }}
+                      ? 'bg-terminal-green/20 text-terminal-green' 
+                      : 'text-terminal-grey hover:bg-terminal-green/10 hover:text-terminal-green'
+                  }`}
                 >
-                  {result.type === 'command' ? (
-                    <>
-                      <div className="flex items-center space-x-3">
-                        {result.icon && <result.icon className="h-4 w-4 text-terminal-green" />}
-                        <span className="text-terminal-green text-sm">{result.label}</span>
-                      </div>
-                      <div className="text-xs text-terminal-grey bg-terminal-bg px-2 py-1 rounded">
-                        {result.shortcut}
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <div className="flex items-center space-x-3">
-                        <div className="text-terminal-amber font-bold">{result.symbol}</div>
-                        <div className="text-terminal-grey text-sm">{result.company}</div>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-terminal-green text-sm">Score: {result.score}</div>
-                      </div>
-                    </>
+                  <div className="flex items-center space-x-3">
+                    {item.type === 'command' ? (
+                      <>
+                        <item.icon className="h-4 w-4" />
+                        <span>{item.label}</span>
+                      </>
+                    ) : (
+                      <>
+                        <TrendingUp className="h-4 w-4" />
+                        <div>
+                          <div className="text-terminal-green font-bold">{item.symbol}</div>
+                          <div className="text-xs text-terminal-grey">{item.company}</div>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                  
+                  {item.type === 'command' && (
+                    <div className="text-xs bg-terminal-green/20 px-2 py-1 rounded">
+                      {item.shortcut}
+                    </div>
+                  )}
+                  
+                  {item.type === 'stock' && (
+                    <div className="text-xs">
+                      <span className="text-terminal-amber">Score: {item.score}</span>
+                    </div>
                   )}
                 </div>
               ))}
             </div>
           )}
         </div>
-
-        {/* Footer */}
-        <div className="border-t border-terminal-green/30 p-2 text-xs text-terminal-grey">
-          <div className="flex justify-between">
-            <span>↑↓ Navigate</span>
-            <span>Enter to select</span>
-          </div>
-        </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 };

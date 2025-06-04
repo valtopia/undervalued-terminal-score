@@ -1,14 +1,10 @@
 
 import React, { useState } from 'react';
-import { Search, Bell, User, Menu } from 'lucide-react';
+import { Search, Bell, User } from 'lucide-react';
 import { CommandPalette } from '../Terminal/CommandPalette';
-import { Button } from '@/components/ui/button';
+import { SidebarTrigger } from '@/components/ui/sidebar';
 
-interface HeaderProps {
-  onMenuToggle?: () => void;
-}
-
-export const Header: React.FC<HeaderProps> = ({ onMenuToggle }) => {
+export const Header: React.FC = () => {
   const [showCommandPalette, setShowCommandPalette] = useState(false);
 
   return (
@@ -17,14 +13,7 @@ export const Header: React.FC<HeaderProps> = ({ onMenuToggle }) => {
         <div className="flex items-center justify-between">
           {/* Left side */}
           <div className="flex items-center space-x-4">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onMenuToggle}
-              className="text-terminal-green hover:bg-terminal-green/10 md:hidden"
-            >
-              <Menu className="h-5 w-5" />
-            </Button>
+            <SidebarTrigger className="text-terminal-green hover:bg-terminal-green/10" />
             
             <div className="flex items-center space-x-2">
               <div className="text-terminal-green font-bold text-lg tracking-wider">
@@ -58,14 +47,12 @@ export const Header: React.FC<HeaderProps> = ({ onMenuToggle }) => {
 
           {/* Right side */}
           <div className="flex items-center space-x-4">
-            <Button
-              variant="ghost"
-              size="sm"
+            <button
               onClick={() => setShowCommandPalette(true)}
-              className="text-terminal-green hover:bg-terminal-green/10 md:hidden"
+              className="text-terminal-green hover:bg-terminal-green/10 p-2 rounded md:hidden"
             >
               <Search className="h-5 w-5" />
-            </Button>
+            </button>
             
             <div className="relative">
               <Bell className="h-5 w-5 text-terminal-green hover:text-terminal-amber cursor-pointer transition-colors" />

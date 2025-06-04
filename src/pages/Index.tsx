@@ -1,14 +1,14 @@
 
 import React, { useState, useEffect } from 'react';
 import { Header } from '@/components/Layout/Header';
-import { Sidebar } from '@/components/Layout/Sidebar';
+import { AppSidebar } from '@/components/app-sidebar';
 import { MarketOverview } from '@/components/Dashboard/MarketOverview';
 import { QuickStats } from '@/components/Dashboard/QuickStats';
 import { StockTable } from '@/components/Dashboard/StockTable';
 import { AlertsPanel } from '@/components/Dashboard/AlertsPanel';
+import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
 
 const Index = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
 
   useEffect(() => {
@@ -33,59 +33,59 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-terminal-bg text-terminal-green scanlines">
-      <Header onMenuToggle={() => setSidebarOpen(!sidebarOpen)} />
-      
-      <div className="flex">
-        <Sidebar isOpen={sidebarOpen} />
-        
-        <main className="flex-1 p-6">
-          {/* System Info Bar */}
-          <div className="mb-6 flex items-center justify-between text-xs text-terminal-grey font-mono">
-            <div className="flex items-center space-x-6">
-              <span>TERMINAL v2.1.4</span>
-              <span>USER: TRADER_001</span>
-              <span>SESSION: {currentTime.toLocaleTimeString()}</span>
-            </div>
-            <div className="flex items-center space-x-4">
-              <span className="text-terminal-green">● CONNECTED</span>
-              <span>LATENCY: 12ms</span>
-            </div>
-          </div>
-
-          {/* Market Overview */}
-          <MarketOverview />
-
-          {/* Quick Stats */}
-          <QuickStats />
-
-          {/* Main Content Grid */}
-          <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
-            {/* Stock Table - Takes 3 columns */}
-            <div className="xl:col-span-3">
-              <StockTable />
-            </div>
-
-            {/* Alerts Panel - Takes 1 column */}
-            <div className="xl:col-span-1">
-              <AlertsPanel />
-            </div>
-          </div>
-
-          {/* Footer Status */}
-          <div className="mt-8 pt-4 border-t border-terminal-green/30 text-xs text-terminal-grey font-mono">
-            <div className="flex justify-between items-center">
-              <div>
-                Data provided by Yahoo Finance • Algorithm v3.2.1 • Last scan: {currentTime.toLocaleString()}
+      <SidebarProvider>
+        <div className="flex min-h-screen w-full">
+          <AppSidebar />
+          <SidebarInset className="flex-1">
+            <Header />
+            
+            <main className="p-6">
+              {/* System Info Bar */}
+              <div className="mb-6 flex items-center justify-between text-xs text-terminal-grey font-mono">
+                <div className="flex items-center space-x-6">
+                  <span>TERMINAL v2.1.4</span>
+                  <span>USER: TRADER_001</span>
+                  <span>SESSION: {currentTime.toLocaleTimeString()}</span>
+                </div>
+                <div className="flex items-center space-x-4">
+                  <span className="text-terminal-green">● CONNECTED</span>
+                  <span>LATENCY: 12ms</span>
+                </div>
               </div>
-              <div className="flex items-center space-x-4">
-                <span>CPU: 23%</span>
-                <span>MEM: 1.2GB</span>
-                <span className="text-terminal-green">READY</span>
+
+              {/* Prioritized Stock Table - Takes most space */}
+              <div className="mb-6">
+                <StockTable />
               </div>
-            </div>
-          </div>
-        </main>
-      </div>
+
+              {/* Market Overview */}
+              <MarketOverview />
+
+              {/* Quick Stats */}
+              <QuickStats />
+
+              {/* Alerts Panel - Moved to bottom for better stock table visibility */}
+              <div className="mt-6">
+                <AlertsPanel />
+              </div>
+
+              {/* Footer Status */}
+              <div className="mt-8 pt-4 border-t border-terminal-green/30 text-xs text-terminal-grey font-mono">
+                <div className="flex justify-between items-center">
+                  <div>
+                    Data provided by Yahoo Finance • Algorithm v3.2.1 • Last scan: {currentTime.toLocaleString()}
+                  </div>
+                  <div className="flex items-center space-x-4">
+                    <span>CPU: 23%</span>
+                    <span>MEM: 1.2GB</span>
+                    <span className="text-terminal-green">READY</span>
+                  </div>
+                </div>
+              </div>
+            </main>
+          </SidebarInset>
+        </div>
+      </SidebarProvider>
     </div>
   );
 };
