@@ -3,17 +3,17 @@ import { AppSidebar } from '../app-sidebar';
 import { Header } from './Header';
 import { Menu } from 'lucide-react';
 import { cn } from '../../lib/utils';
-import { useSidebar } from '@/providers/SidebarProvider';
+import { SidebarProvider, useSidebar } from '@/components/ui/sidebar';
 
-export const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { isMobile, isSidebarVisible, toggleMobileSidebar } = useSidebar();
+const MainLayoutContent: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { isMobile, openMobile, setOpenMobile } = useSidebar();
 
   return (
     <div className="relative flex min-h-screen bg-black text-terminal-green">
       {/* Mobile Menu Button */}
       {isMobile && (
         <button
-          onClick={toggleMobileSidebar}
+          onClick={() => setOpenMobile(true)}
           className="fixed top-4 left-4 z-50 p-2 bg-black border border-terminal-green/30 
                    rounded-md hover:bg-terminal-green/10 transition-colors md:hidden"
         >
@@ -42,12 +42,20 @@ export const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }
       </main>
 
       {/* Mobile Overlay */}
-      {isMobile && isSidebarVisible && (
+      {isMobile && openMobile && (
         <div
           className="fixed inset-0 bg-black/50 z-40"
-          onClick={toggleMobileSidebar}
+          onClick={() => setOpenMobile(false)}
         />
       )}
     </div>
+  );
+};
+
+export const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  return (
+    <SidebarProvider defaultOpen={true}>
+      <MainLayoutContent>{children}</MainLayoutContent>
+    </SidebarProvider>
   );
 }; 

@@ -11,6 +11,7 @@ import {
   CreditCard,
   Info,
   Briefcase,
+  LineChart,
 } from 'lucide-react';
 import {
   Sidebar,
@@ -38,9 +39,9 @@ export function AppSidebar() {
     >
       {/* Logo Section */}
       <SidebarHeader className="p-2.5 border-b border-terminal-green/30">
-        <div className="text-terminal-green font-mono font-bold tracking-wider terminal-glow text-2xl text-center">
+        <Link to="/" className="text-terminal-green font-mono font-bold tracking-wider terminal-glow text-2xl text-center block">
           V
-        </div>
+        </Link>
       </SidebarHeader>
 
       {/* Main Navigation */}
@@ -49,11 +50,35 @@ export function AppSidebar() {
           <SidebarMenuItem>
             <SidebarMenuButton
               asChild
-              isActive={location.pathname === "/"}
+              isActive={location.pathname === "/dashboard"}
               tooltip="Dashboard"
             >
-              <Link to="/" className="flex items-center justify-center">
+              <Link to="/dashboard" className="flex items-center justify-center">
                 <BarChart3 className="h-5 w-5" />
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              asChild
+              isActive={location.pathname === "/analytics"}
+              tooltip="Analytics"
+            >
+              <Link to="/analytics" className="flex items-center justify-center">
+                <LineChart className="h-5 w-5" />
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              asChild
+              isActive={location.pathname === "/alerts"}
+              tooltip="Alerts"
+            >
+              <Link to="/alerts" className="flex items-center justify-center">
+                <Bell className="h-5 w-5" />
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>

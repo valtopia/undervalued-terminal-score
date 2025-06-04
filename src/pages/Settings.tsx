@@ -1,321 +1,148 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Header } from '@/components/Layout/Header';
 import { AppSidebar } from '@/components/app-sidebar';
 import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
-import { Switch } from '@/components/ui/switch';
-import { Slider } from '@/components/ui/slider';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  AlertCircle,
-  User,
-  Settings as SettingsIcon,
-  Lock,
-  Mail,
-  Monitor,
-  Clock,
-  Trash2,
-  LogOut,
-  Download,
-  FileText,
-  Shield
-} from 'lucide-react';
-
-const SettingsSection: React.FC<{
-  title: string;
-  icon: React.ReactNode;
-  children: React.ReactNode;
-}> = ({ title, icon, children }) => (
-  <div className="bg-black/50 border border-terminal-green/30 rounded-lg p-6 hover:border-terminal-green/60 transition-all duration-300">
-    <div className="flex items-center space-x-2 mb-6 text-terminal-green">
-      {icon}
-      <h2 className="text-lg font-mono">{title}</h2>
-    </div>
-    <div className="space-y-6">
-      {children}
-    </div>
-  </div>
-);
-
-const SettingsRow: React.FC<{
-  label: string;
-  children: React.ReactNode;
-  description?: string;
-}> = ({ label, children, description }) => (
-  <div className="flex items-center justify-between py-2">
-    <div>
-      <div className="text-terminal-green font-mono text-sm">{label}</div>
-      {description && (
-        <div className="text-terminal-grey text-xs mt-1">{description}</div>
-      )}
-    </div>
-    {children}
-  </div>
-);
-
-// Mock data for active sessions
-const activeSessions = [
-  {
-    device: 'MacBook Pro',
-    location: 'New York, USA',
-    lastActive: '2 minutes ago',
-    ip: '192.168.1.1'
-  },
-  {
-    device: 'iPhone 13',
-    location: 'London, UK',
-    lastActive: '1 hour ago',
-    ip: '192.168.1.2'
-  }
-];
+import { Settings as SettingsIcon, Bell, Lock, Database, Terminal, Network } from 'lucide-react';
 
 const Settings = () => {
-  const [emailNotifs, setEmailNotifs] = useState(true);
-  const [browserNotifs, setBrowserNotifs] = useState(true);
-  const [animations, setAnimations] = useState(true);
-  const [fullNames, setFullNames] = useState(false);
-  const [uvScoreThreshold, setUvScoreThreshold] = useState([7]);
-
   return (
     <div className="min-h-screen bg-black text-terminal-green scanline">
       <SidebarProvider>
         <div className="flex min-h-screen w-full">
-          <AppSidebar 
-            isExpanded={true}
-            onToggle={() => {}}
-            isMobile={false}
-          />
-          <SidebarInset className="flex-1">
+          <AppSidebar />
+          <SidebarInset className="flex-1 w-full overflow-x-hidden">
             <Header isMobile={false} />
             
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-              {/* Title Section */}
-              <div className="text-center mb-16">
-                <h1 className="text-4xl font-mono font-bold terminal-glow mb-4">
-                  VALTOPIA SETTINGS
-                </h1>
-                <p className="text-terminal-grey text-lg font-mono">
-                  Tune Your Terminal
-                </p>
-              </div>
-
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
               {/* System Info Bar */}
-              <div className="mb-12 flex justify-between text-xs text-terminal-grey font-mono bg-black/30 p-4 rounded-lg border border-terminal-green/20">
-                <span className="terminal-glow">SETTINGS MODULE v1.0.0</span>
-                <span>LAST UPDATE: {new Date().toLocaleTimeString()}</span>
+              <div className="mb-6 flex flex-col sm:flex-row items-center justify-between text-xs text-terminal-grey font-mono bg-black/30 p-4 rounded-lg border border-terminal-green/20">
+                <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-6 mb-2 sm:mb-0">
+                  <span className="terminal-glow">VALTOPIA SETTINGS v1.0.0</span>
+                  <span>MODE: STATIC</span>
+                  <span>LAST UPDATE: {new Date().toLocaleTimeString()}</span>
+                </div>
+                <div className="flex items-center space-x-4">
+                  <span>• STATIC</span>
+                  <span>DELAY: N/A</span>
+                </div>
               </div>
 
-              {/* Settings Grid */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {/* Alerts Section */}
-                <SettingsSection title="ALERTS" icon={<AlertCircle className="h-5 w-5" />}>
-                  <SettingsRow 
-                    label="Email Notifications"
-                    description="Receive alerts in your email"
-                  >
-                    <Switch
-                      checked={emailNotifs}
-                      onCheckedChange={setEmailNotifs}
-                      className="terminal-switch"
-                    />
-                  </SettingsRow>
-
-                  <SettingsRow
-                    label="Browser Notifications"
-                    description="Push notifications in your browser"
-                  >
-                    <Switch
-                      checked={browserNotifs}
-                      onCheckedChange={setBrowserNotifs}
-                      className="terminal-switch"
-                    />
-                  </SettingsRow>
-
-                  <SettingsRow label="Check Frequency">
-                    <Select defaultValue="4h">
-                      <SelectTrigger className="w-32 terminal-select">
-                        <SelectValue placeholder="Select" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="1h">1 hour</SelectItem>
-                        <SelectItem value="4h">4 hours</SelectItem>
-                        <SelectItem value="12h">12 hours</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </SettingsRow>
-
-                  <SettingsRow
-                    label="Minimum UV Score"
-                    description="Minimum score to receive alerts"
-                  >
-                    <div className="w-48">
-                      <Slider
-                        value={uvScoreThreshold}
-                        onValueChange={setUvScoreThreshold}
-                        max={10}
-                        min={5}
-                        step={0.1}
-                        className="terminal-slider"
-                      />
-                      <div className="text-right mt-1 text-terminal-grey text-xs">
-                        {uvScoreThreshold[0]}
-                      </div>
-                    </div>
-                  </SettingsRow>
-                </SettingsSection>
-
-                {/* Account Section */}
-                <SettingsSection title="ACCOUNT" icon={<User className="h-5 w-5" />}>
-                  <SettingsRow label="Email Address">
-                    <div className="flex items-center space-x-2">
-                      <input
-                        type="email"
-                        value="user@valtopia.com"
-                        className="bg-black border border-terminal-green/30 rounded px-3 py-1 text-sm font-mono text-terminal-green focus:border-terminal-green focus:outline-none"
-                      />
-                      <button className="terminal-button">
-                        <Mail className="h-4 w-4" />
-                      </button>
-                    </div>
-                  </SettingsRow>
-
-                  <SettingsRow label="Change Password">
+              {/* Command Bar */}
+              <div className="mb-6">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-4">
+                    <button className="terminal-button text-terminal-green border-terminal-green">
+                      <Terminal className="h-4 w-4 mr-2" />
+                      TERMINAL
+                    </button>
                     <button className="terminal-button">
-                      CHANGE
+                      <Bell className="h-4 w-4 mr-2" />
+                      NOTIFICATIONS
                     </button>
-                  </SettingsRow>
-
-                  <SettingsRow label="Account Type">
-                    <span className="text-terminal-amber font-mono">PRO</span>
-                  </SettingsRow>
-
-                  <SettingsRow
-                    label="Delete Account"
-                    description="This action cannot be undone"
-                  >
-                    <button className="terminal-button text-terminal-red border-terminal-red/30 hover:border-terminal-red">
-                      <Trash2 className="h-4 w-4 mr-2" />
-                      DELETE
+                    <button className="terminal-button">
+                      <Lock className="h-4 w-4 mr-2" />
+                      SECURITY
                     </button>
-                  </SettingsRow>
-                </SettingsSection>
+                  </div>
+                  <button className="terminal-button text-terminal-amber border-terminal-amber">
+                    SAVE CHANGES
+                  </button>
+                </div>
+              </div>
 
-                {/* Preferences Section */}
-                <SettingsSection title="PREFERENCES" icon={<SettingsIcon className="h-5 w-5" />}>
-                  <SettingsRow label="Terminal Font">
-                    <Select defaultValue="fira">
-                      <SelectTrigger className="w-40 terminal-select">
-                        <SelectValue placeholder="Select" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="courier">Courier</SelectItem>
-                        <SelectItem value="fira">Fira Code</SelectItem>
-                        <SelectItem value="jetbrains">JetBrains Mono</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </SettingsRow>
+              {/* Main Content Grid */}
+              <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                {/* Settings Navigation */}
+                <div className="lg:col-span-1">
+                  <div className="bg-black border border-terminal-green/30 rounded-lg p-6">
+                    <h2 className="text-terminal-green font-mono text-lg mb-4">CATEGORIES</h2>
+                    <nav className="space-y-2">
+                      <button className="w-full flex items-center space-x-2 px-4 py-2 text-left text-terminal-green bg-terminal-green/10 rounded">
+                        <Terminal className="h-4 w-4" />
+                        <span className="font-mono text-sm">Terminal</span>
+                      </button>
+                      <button className="w-full flex items-center space-x-2 px-4 py-2 text-left text-terminal-grey hover:text-terminal-green hover:bg-terminal-green/5 rounded">
+                        <Bell className="h-4 w-4" />
+                        <span className="font-mono text-sm">Notifications</span>
+                      </button>
+                      <button className="w-full flex items-center space-x-2 px-4 py-2 text-left text-terminal-grey hover:text-terminal-green hover:bg-terminal-green/5 rounded">
+                        <Lock className="h-4 w-4" />
+                        <span className="font-mono text-sm">Security</span>
+                      </button>
+                      <button className="w-full flex items-center space-x-2 px-4 py-2 text-left text-terminal-grey hover:text-terminal-green hover:bg-terminal-green/5 rounded">
+                        <Database className="h-4 w-4" />
+                        <span className="font-mono text-sm">Data</span>
+                      </button>
+                      <button className="w-full flex items-center space-x-2 px-4 py-2 text-left text-terminal-grey hover:text-terminal-green hover:bg-terminal-green/5 rounded">
+                        <Network className="h-4 w-4" />
+                        <span className="font-mono text-sm">Network</span>
+                      </button>
+                    </nav>
+                  </div>
+                </div>
 
-                  <SettingsRow
-                    label="Glow Animations"
-                    description="Glow effects on interactive elements"
-                  >
-                    <Switch
-                      checked={animations}
-                      onCheckedChange={setAnimations}
-                      className="terminal-switch"
-                    />
-                  </SettingsRow>
+                {/* Settings Content */}
+                <div className="lg:col-span-3">
+                  <div className="bg-black border border-terminal-green/30 rounded-lg p-6">
+                    <h2 className="text-terminal-green font-mono text-lg mb-6">TERMINAL SETTINGS</h2>
 
-                  <SettingsRow
-                    label="Show Full Names"
-                    description="Full names vs ticker symbols"
-                  >
-                    <Switch
-                      checked={fullNames}
-                      onCheckedChange={setFullNames}
-                      className="terminal-switch"
-                    />
-                  </SettingsRow>
-
-                  <SettingsRow label="Default Screener Order">
-                    <Select defaultValue="uvscore">
-                      <SelectTrigger className="w-40 terminal-select">
-                        <SelectValue placeholder="Select" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="uvscore">UV Score</SelectItem>
-                        <SelectItem value="sector">Sector</SelectItem>
-                        <SelectItem value="price">Price</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </SettingsRow>
-                </SettingsSection>
-
-                {/* Security Section */}
-                <SettingsSection title="SECURITY" icon={<Lock className="h-5 w-5" />}>
-                  <div className="space-y-4 mb-6">
-                    <div className="text-sm text-terminal-grey mb-2">Active Sessions</div>
-                    {activeSessions.map((session, index) => (
-                      <div
-                        key={index}
-                        className="border border-terminal-green/20 rounded p-3 text-xs"
-                      >
-                        <div className="flex items-center justify-between mb-2">
-                          <div className="flex items-center space-x-2">
-                            <Monitor className="h-4 w-4 text-terminal-green" />
-                            <span className="text-terminal-green">{session.device}</span>
-                          </div>
-                          <span className="text-terminal-grey">{session.ip}</span>
-                        </div>
-                        <div className="flex items-center justify-between text-terminal-grey">
-                          <span>{session.location}</span>
-                          <div className="flex items-center space-x-1">
-                            <Clock className="h-3 w-3" />
-                            <span>{session.lastActive}</span>
-                          </div>
+                    <div className="space-y-6">
+                      {/* Theme Settings */}
+                      <div className="space-y-4">
+                        <h3 className="text-terminal-grey font-mono text-sm">THEME</h3>
+                        <div className="grid grid-cols-2 gap-4">
+                          <button className="p-4 border border-terminal-green rounded text-center">
+                            <span className="block text-terminal-green font-mono text-sm mb-2">DARK</span>
+                            <span className="block text-terminal-grey text-xs">Default theme</span>
+                          </button>
+                          <button className="p-4 border border-terminal-green/30 rounded text-center hover:border-terminal-green">
+                            <span className="block text-terminal-grey font-mono text-sm mb-2">LIGHT</span>
+                            <span className="block text-terminal-grey text-xs">Coming soon</span>
+                          </button>
                         </div>
                       </div>
-                    ))}
-                  </div>
 
-                  <div className="space-y-4">
-                    <button className="terminal-button w-full">
-                      <LogOut className="h-4 w-4 mr-2" />
-                      SIGN OUT OTHER SESSIONS
-                    </button>
+                      {/* Font Settings */}
+                      <div className="space-y-4">
+                        <h3 className="text-terminal-grey font-mono text-sm">FONT SIZE</h3>
+                        <div className="flex items-center space-x-4">
+                          <button className="px-4 py-2 text-xs font-mono border border-terminal-green/30 rounded hover:border-terminal-green">12px</button>
+                          <button className="px-4 py-2 text-xs font-mono border border-terminal-green rounded">14px</button>
+                          <button className="px-4 py-2 text-xs font-mono border border-terminal-green/30 rounded hover:border-terminal-green">16px</button>
+                        </div>
+                      </div>
 
-                    <button className="terminal-button w-full">
-                      <Download className="h-4 w-4 mr-2" />
-                      EXPORT DATA (.JSON)
-                    </button>
-
-                    <div className="flex justify-between text-xs text-terminal-grey pt-4">
-                      <button className="flex items-center hover:text-terminal-green">
-                        <FileText className="h-4 w-4 mr-1" />
-                        Terms of Service
-                      </button>
-                      <button className="flex items-center hover:text-terminal-green">
-                        <Shield className="h-4 w-4 mr-1" />
-                        Privacy Policy
-                      </button>
+                      {/* Layout Settings */}
+                      <div className="space-y-4">
+                        <h3 className="text-terminal-grey font-mono text-sm">LAYOUT</h3>
+                        <div className="space-y-2">
+                          <label className="flex items-center space-x-2">
+                            <input type="checkbox" className="form-checkbox text-terminal-green" checked />
+                            <span className="text-terminal-grey text-sm">Show system info bar</span>
+                          </label>
+                          <label className="flex items-center space-x-2">
+                            <input type="checkbox" className="form-checkbox text-terminal-green" checked />
+                            <span className="text-terminal-grey text-sm">Show footer status</span>
+                          </label>
+                          <label className="flex items-center space-x-2">
+                            <input type="checkbox" className="form-checkbox text-terminal-green" checked />
+                            <span className="text-terminal-grey text-sm">Enable animations</span>
+                          </label>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </SettingsSection>
+                </div>
               </div>
 
               {/* Footer Status */}
-              <div className="mt-16 pt-4 border-t border-terminal-green/30 text-xs text-terminal-grey font-mono">
-                <div className="flex justify-between items-center">
-                  <div>
-                    Settings Engine v1.0.1 • All Systems Operational
+              <div className="mt-12 pt-4 border-t border-terminal-green/30 text-xs text-terminal-grey font-mono">
+                <div className="flex flex-col sm:flex-row justify-between items-center space-y-2 sm:space-y-0">
+                  <div className="text-center sm:text-left">
+                    Settings Engine v1.0.0 • User: USER_001 • Session: 2h 15m
                   </div>
                   <div className="flex items-center space-x-4">
-                    <span>CACHE: 128KB</span>
+                    <span>CHANGES: 0</span>
                     <span className="text-terminal-green">READY</span>
                   </div>
                 </div>

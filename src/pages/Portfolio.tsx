@@ -1,6 +1,9 @@
 import React from 'react';
 import { TrendingUp, TrendingDown, Briefcase, PieChart, DollarSign, Activity } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Header } from '@/components/Layout/Header';
+import { AppSidebar } from '@/components/app-sidebar';
+import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
 
 // Mock data for portfolio
 const portfolioSummary = {
@@ -71,134 +74,132 @@ const metrics = [
   }
 ];
 
-export default function Portfolio() {
+const Portfolio = () => {
   return (
-    <div className="p-8">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-mono text-terminal-green">PORTFOLIO</h1>
-          <div className="flex items-center gap-4">
-            <button className="bg-terminal-green/10 text-terminal-green px-4 py-2 rounded font-mono text-sm hover:bg-terminal-green/20 transition-colors">
-              ADD POSITION
-            </button>
-            <button className="bg-terminal-green/10 text-terminal-green px-4 py-2 rounded font-mono text-sm hover:bg-terminal-green/20 transition-colors">
-              EXPORT DATA
-            </button>
-          </div>
-        </div>
+    <div className="min-h-screen bg-black text-terminal-green scanline">
+      <SidebarProvider>
+        <div className="flex min-h-screen w-full">
+          <AppSidebar />
+          <SidebarInset className="flex-1 w-full overflow-x-hidden">
+            <Header isMobile={false} />
+            
+            <div className="max-w-7xl mx-auto px-8 py-8">
+              {/* System Info Bar */}
+              <div className="mb-6 flex items-center justify-between text-xs text-terminal-grey font-mono bg-black/30 p-4 rounded-lg border border-terminal-green/20">
+                <div className="flex items-center space-x-6">
+                  <span className="terminal-glow">VALTOPIA PORTFOLIO v1.0.0</span>
+                  <span>MODE: STATIC</span>
+                  <span>LAST UPDATE: {new Date().toLocaleTimeString()}</span>
+                </div>
+                <div className="flex items-center space-x-4">
+                  <span>• STATIC</span>
+                  <span>DELAY: N/A</span>
+                </div>
+              </div>
 
-        {/* Portfolio Summary */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <div className="bg-sidebar p-6 rounded-lg">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-terminal-grey font-mono text-sm">TOTAL VALUE</span>
-              <Briefcase className="h-4 w-4 text-terminal-green" />
-            </div>
-            <div className="text-terminal-green font-mono text-2xl">
-              ${portfolioSummary.totalValue.toLocaleString()}
-            </div>
-          </div>
-
-          <div className="bg-sidebar p-6 rounded-lg">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-terminal-grey font-mono text-sm">DAY CHANGE</span>
-              <Activity className="h-4 w-4 text-terminal-green" />
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-terminal-green font-mono text-2xl">
-                ${portfolioSummary.dayChange.toLocaleString()}
-              </span>
-              <span className="text-terminal-green font-mono text-sm">
-                ({portfolioSummary.dayChangePercent}%)
-              </span>
-            </div>
-          </div>
-
-          <div className="bg-sidebar p-6 rounded-lg">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-terminal-grey font-mono text-sm">TOTAL GAIN/LOSS</span>
-              <DollarSign className="h-4 w-4 text-terminal-green" />
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-terminal-green font-mono text-2xl">
-                ${portfolioSummary.totalGain.toLocaleString()}
-              </span>
-              <span className="text-terminal-green font-mono text-sm">
-                ({portfolioSummary.totalGainPercent}%)
-              </span>
-            </div>
-          </div>
-
-          <div className="bg-sidebar p-6 rounded-lg">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-terminal-grey font-mono text-sm">POSITIONS</span>
-              <PieChart className="h-4 w-4 text-terminal-green" />
-            </div>
-            <div className="text-terminal-green font-mono text-2xl">
-              {portfolioSummary.positions}
-            </div>
-          </div>
-        </div>
-
-        {/* Portfolio Metrics */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          {metrics.map((metric) => (
-            <div key={metric.label} className="bg-sidebar p-4 rounded-lg">
-              <div className="text-terminal-grey font-mono text-xs mb-1">{metric.label}</div>
-              <div className="text-terminal-green font-mono text-xl mb-1">{metric.value}</div>
-              <div className="text-terminal-grey/70 font-mono text-xs">{metric.description}</div>
-            </div>
-          ))}
-        </div>
-
-        {/* Positions Table */}
-        <div className="bg-sidebar rounded-lg overflow-hidden">
-          <table className="w-full font-mono text-sm">
-            <thead>
-              <tr className="text-terminal-grey/70">
-                <th className="text-left p-4">SYMBOL</th>
-                <th className="text-right p-4">SHARES</th>
-                <th className="text-right p-4">AVG PRICE</th>
-                <th className="text-right p-4">CURRENT</th>
-                <th className="text-right p-4">VALUE</th>
-                <th className="text-right p-4">GAIN/LOSS</th>
-                <th className="text-right p-4">UV SCORE</th>
-                <th className="text-right p-4">WEIGHT</th>
-              </tr>
-            </thead>
-            <tbody>
-              {portfolioPositions.map((position) => (
-                <tr 
-                  key={position.symbol}
-                  className="border-t border-terminal-green/10 hover:bg-terminal-green/5 transition-colors"
-                >
-                  <td className="text-terminal-green p-4 font-medium">{position.symbol}</td>
-                  <td className="text-terminal-grey text-right p-4">{position.shares}</td>
-                  <td className="text-terminal-grey text-right p-4">${position.avgPrice.toFixed(2)}</td>
-                  <td className="text-terminal-grey text-right p-4">${position.currentPrice.toFixed(2)}</td>
-                  <td className="text-terminal-grey text-right p-4">${position.value.toLocaleString()}</td>
-                  <td className="text-right p-4">
-                    <div className="flex items-center justify-end gap-1">
-                      {position.gain >= 0 ? (
-                        <TrendingUp className="h-3 w-3 text-terminal-green" />
-                      ) : (
-                        <TrendingDown className="h-3 w-3 text-terminal-red" />
-                      )}
-                      <span className={cn(
-                        position.gain >= 0 ? 'text-terminal-green' : 'text-terminal-red'
+              {/* Main Content Grid */}
+              <div className="grid grid-cols-2 gap-6">
+                {/* Portfolio Summary */}
+                <div className="col-span-2 bg-black/30 p-6 rounded-lg border border-terminal-green/20">
+                  <div className="grid grid-cols-3 gap-6">
+                    <div>
+                      <h3 className="text-xs text-terminal-grey mb-2 font-mono">VALOR TOTAL</h3>
+                      <div className="text-2xl font-mono terminal-glow">${portfolioSummary.totalValue.toLocaleString()}</div>
+                      <div className={cn(
+                        "text-sm font-mono mt-1",
+                        portfolioSummary.dayChange > 0 ? "text-terminal-green" : "text-terminal-red"
                       )}>
-                        ${Math.abs(position.gain).toLocaleString()} ({position.gainPercent}%)
-                      </span>
+                        {portfolioSummary.dayChange > 0 ? "+" : "-"}${Math.abs(portfolioSummary.dayChange).toLocaleString()} ({portfolioSummary.dayChangePercent}%)
+                      </div>
                     </div>
-                  </td>
-                  <td className="text-terminal-amber text-right p-4 font-medium">{position.uvScore}</td>
-                  <td className="text-terminal-grey text-right p-4">{position.weight}%</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                    <div>
+                      <h3 className="text-xs text-terminal-grey mb-2 font-mono">GANANCIA TOTAL</h3>
+                      <div className="text-2xl font-mono terminal-glow">${portfolioSummary.totalGain.toLocaleString()}</div>
+                      <div className={cn(
+                        "text-sm font-mono mt-1",
+                        portfolioSummary.totalGainPercent > 0 ? "text-terminal-green" : "text-terminal-red"
+                      )}>
+                        {portfolioSummary.totalGainPercent > 0 ? "+" : "-"}{Math.abs(portfolioSummary.totalGainPercent)}%
+                      </div>
+                    </div>
+                    <div>
+                      <h3 className="text-xs text-terminal-grey mb-2 font-mono">POSICIONES</h3>
+                      <div className="text-2xl font-mono terminal-glow">{portfolioSummary.positions}</div>
+                      <div className="text-sm font-mono mt-1 text-terminal-grey">Activas</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Portfolio Positions */}
+                <div className="bg-black/30 p-6 rounded-lg border border-terminal-green/20">
+                  <h2 className="text-xl font-mono mb-4 flex items-center gap-2">
+                    <Briefcase className="h-5 w-5" />
+                    POSICIONES
+                  </h2>
+                  <div className="space-y-4">
+                    {portfolioPositions.map((position) => (
+                      <div key={position.symbol} className="p-4 bg-black/20 rounded border border-terminal-green/10">
+                        <div className="flex justify-between items-start mb-2">
+                          <div>
+                            <div className="font-mono text-lg">{position.symbol}</div>
+                            <div className="text-xs text-terminal-grey font-mono">{position.shares} acciones</div>
+                          </div>
+                          <div className="text-right">
+                            <div className="font-mono">${position.value.toLocaleString()}</div>
+                            <div className={cn(
+                              "text-xs font-mono",
+                              position.gainPercent > 0 ? "text-terminal-green" : "text-terminal-red"
+                            )}>
+                              {position.gainPercent > 0 ? "+" : "-"}{Math.abs(position.gainPercent)}%
+                            </div>
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-3 gap-2 text-xs text-terminal-grey font-mono">
+                          <div>Precio: ${position.currentPrice}</div>
+                          <div>UV Score: {position.uvScore}</div>
+                          <div>Peso: {position.weight}%</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Portfolio Metrics */}
+                <div className="bg-black/30 p-6 rounded-lg border border-terminal-green/20">
+                  <h2 className="text-xl font-mono mb-4 flex items-center gap-2">
+                    <Activity className="h-5 w-5" />
+                    MÉTRICAS
+                  </h2>
+                  <div className="grid grid-cols-2 gap-4">
+                    {metrics.map((metric) => (
+                      <div key={metric.label} className="p-4 bg-black/20 rounded border border-terminal-green/10">
+                        <div className="text-xs text-terminal-grey font-mono mb-1">{metric.label}</div>
+                        <div className="text-lg font-mono terminal-glow">{metric.value}</div>
+                        <div className="text-xs text-terminal-grey font-mono mt-1">{metric.description}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Footer Status */}
+              <div className="mt-12 pt-4 border-t border-terminal-green/30 text-xs text-terminal-grey font-mono">
+                <div className="flex justify-between items-center">
+                  <div>
+                    Portfolio Engine v1.0.0 • Assets: {portfolioSummary.positions} • Total Value: ${portfolioSummary.totalValue.toLocaleString()}
+                  </div>
+                  <div className="flex items-center space-x-4">
+                    <span>P/L: {portfolioSummary.totalGainPercent > 0 ? "+" : "-"}{Math.abs(portfolioSummary.totalGainPercent)}%</span>
+                    <span className="text-terminal-green">READY</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </SidebarInset>
         </div>
-      </div>
+      </SidebarProvider>
     </div>
   );
-} 
+};
+
+export default Portfolio; 
