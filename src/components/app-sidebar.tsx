@@ -1,111 +1,129 @@
-
 import React from 'react';
-import { TrendingUp, BarChart3, Bell, Settings, DollarSign, Filter } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
+import {
+  TrendingUp,
+  BarChart3,
+  Bell,
+  Settings,
+  DollarSign,
+  Filter,
+  Search,
+  CreditCard,
+  Info,
+  Briefcase,
+} from 'lucide-react';
 import {
   Sidebar,
   SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarSeparator,
+  SidebarFooter,
 } from '@/components/ui/sidebar';
-
-const menuItems = [
-  { icon: TrendingUp, label: 'DASHBOARD', path: '/', active: true },
-  { icon: BarChart3, label: 'ANALYTICS', path: '/analytics' },
-  { icon: Bell, label: 'ALERTS', path: '/alerts', badge: '3' },
-  { icon: Filter, label: 'SCREENER', path: '/screener' },
-  { icon: DollarSign, label: 'PRICING', path: '/pricing' },
-  { icon: Settings, label: 'SETTINGS', path: '/settings' },
-];
+import { cn } from '@/lib/utils';
 
 export function AppSidebar() {
+  const location = useLocation();
+
   return (
-    <Sidebar className="bg-terminal-bg border-terminal-green/30">
-      <SidebarHeader className="p-4">
-        <div className="p-3 border border-terminal-green/30 bg-terminal-bg-light">
-          <div className="text-terminal-green text-xs uppercase tracking-wider mb-2">
-            SYSTEM STATUS
-          </div>
-          <div className="space-y-1 text-xs">
-            <div className="flex justify-between">
-              <span className="text-terminal-grey">MARKET</span>
-              <span className="text-terminal-green">● OPEN</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-terminal-grey">DATA FEED</span>
-              <span className="text-terminal-green">● LIVE</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-terminal-grey">ALERTS</span>
-              <span className="text-terminal-amber">● ACTIVE</span>
-            </div>
-          </div>
+    <Sidebar
+      className={cn(
+        "fixed top-0 left-0 h-screen transition-all duration-300 ease-in-out border-r border-terminal-green/30 bg-black z-50",
+        "w-[70px]",
+        "flex flex-col"
+      )}
+      side="left"
+      collapsible="icon"
+    >
+      {/* Logo Section */}
+      <SidebarHeader className="p-2.5 border-b border-terminal-green/30">
+        <div className="text-terminal-green font-mono font-bold tracking-wider terminal-glow text-2xl text-center">
+          V
         </div>
       </SidebarHeader>
 
-      <SidebarContent className="p-4">
-        <SidebarGroup>
-          <SidebarGroupLabel className="text-terminal-green font-mono uppercase tracking-wider">
-            Navigation
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {menuItems.map((item) => (
-                <SidebarMenuItem key={item.label}>
-                  <SidebarMenuButton 
-                    asChild
-                    isActive={item.active}
-                    className="font-mono uppercase tracking-wider text-terminal-grey hover:text-terminal-green hover:bg-terminal-green/5 data-[active=true]:bg-terminal-green/10 data-[active=true]:text-terminal-green data-[active=true]:border-l-2 data-[active=true]:border-terminal-green"
-                  >
-                    <a href={item.path} className="flex items-center justify-between">
-                      <div className="flex items-center space-x-3">
-                        <item.icon className="h-4 w-4" />
-                        <span>{item.label}</span>
-                      </div>
-                      {item.badge && (
-                        <div className="bg-terminal-red text-white text-xs px-2 py-1 rounded">
-                          {item.badge}
-                        </div>
-                      )}
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        <SidebarSeparator className="bg-terminal-green/30" />
-
-        <SidebarGroup>
-          <SidebarGroupLabel className="text-terminal-green font-mono uppercase tracking-wider">
-            Portfolio
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <div className="p-3 border border-terminal-green/30 bg-terminal-bg-light">
-              <div className="space-y-1 text-xs">
-                <div className="flex justify-between">
-                  <span className="text-terminal-grey">TRACKED</span>
-                  <span className="text-terminal-green">147</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-terminal-grey">UNDERVALUED</span>
-                  <span className="text-terminal-amber">23</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-terminal-grey">ALERTS</span>
-                  <span className="text-terminal-red">3</span>
-                </div>
-              </div>
-            </div>
-          </SidebarGroupContent>
-        </SidebarGroup>
+      {/* Main Navigation */}
+      <SidebarContent className="flex-1 p-2.5 flex flex-col justify-center">
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              asChild
+              isActive={location.pathname === "/"}
+              tooltip="Dashboard"
+            >
+              <Link to="/" className="flex items-center justify-center">
+                <BarChart3 className="h-5 w-5" />
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              asChild
+              isActive={location.pathname === "/screener"}
+              tooltip="Screener"
+            >
+              <Link to="/screener" className="flex items-center justify-center">
+                <Search className="h-5 w-5" />
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              asChild
+              isActive={location.pathname === "/portfolio"}
+              tooltip="Portfolio"
+            >
+              <Link to="/portfolio" className="flex items-center justify-center">
+                <Briefcase className="h-5 w-5" />
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              asChild
+              isActive={location.pathname === "/pricing"}
+              tooltip="Pricing"
+            >
+              <Link to="/pricing" className="flex items-center justify-center">
+                <CreditCard className="h-5 w-5" />
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarContent>
+
+      {/* Footer Navigation */}
+      <SidebarFooter className="p-2.5 border-t border-terminal-green/30">
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              asChild
+              isActive={location.pathname === "/about"}
+              tooltip="About"
+            >
+              <Link to="/about" className="flex items-center justify-center">
+                <Info className="h-5 w-5" />
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              asChild
+              isActive={location.pathname === "/settings"}
+              tooltip="Settings"
+            >
+              <Link to="/settings" className="flex items-center justify-center">
+                <Settings className="h-5 w-5" />
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarFooter>
     </Sidebar>
   );
 }

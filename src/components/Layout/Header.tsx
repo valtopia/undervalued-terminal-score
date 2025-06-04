@@ -1,25 +1,30 @@
-
 import React, { useState } from 'react';
 import { Search, Bell, User } from 'lucide-react';
 import { CommandPalette } from '../Terminal/CommandPalette';
-import { SidebarTrigger } from '@/components/ui/sidebar';
+import { cn } from '@/lib/utils';
 
-export const Header: React.FC = () => {
+interface HeaderProps {
+  isMobile: boolean;
+  className?: string;
+}
+
+export const Header: React.FC<HeaderProps> = ({ isMobile, className }) => {
   const [showCommandPalette, setShowCommandPalette] = useState(false);
 
   return (
     <>
-      <header className="bg-terminal-bg border-b border-terminal-green/30 px-4 py-3">
-        <div className="flex items-center justify-between">
-          {/* Left side */}
-          <div className="flex items-center space-x-4">
-            <SidebarTrigger className="text-terminal-green hover:bg-terminal-green/10" />
-            
+      <header className={cn(
+        "bg-terminal-bg border-b border-terminal-green/30",
+        className
+      )}>
+        <div className="flex items-center justify-between px-4">
+          {/* Left side - Logo */}
+          <div className={`flex items-center ${isMobile ? 'ml-12' : 'ml-0'}`}>
             <div className="flex items-center space-x-2">
-              <div className="text-terminal-green font-bold text-lg tracking-wider">
-                TERMINAL
+              <div className="text-terminal-green font-bold text-lg tracking-wider terminal-glow">
+                VALTOPIA
               </div>
-              <div className="text-terminal-amber text-sm">
+              <div className="text-terminal-amber text-sm hidden sm:block">
                 v2.1.4
               </div>
             </div>
