@@ -1,73 +1,76 @@
-# Welcome to your Lovable project
+# Undervalued Terminal Score
 
-## Project info
+Una aplicación web moderna para análisis financiero y seguimiento de mercados, con un diseño inspirado en terminales financieras profesionales.
 
-**URL**: https://lovable.dev/projects/7b12dd95-088e-4a46-800d-64872771d0fd
+## Características Principales
 
-## How can I edit this code?
+- **Dashboard Responsivo**: Visualización adaptativa de datos financieros con soporte para diferentes tamaños de pantalla
+- **Análisis de Mercado**: Herramientas avanzadas para análisis de acciones y mercados
+- **Sistema de Alertas**: Notificaciones en tiempo real sobre movimientos del mercado
+- **Gestión de Portafolio**: Seguimiento y análisis detallado de inversiones
+- **Métricas Dinámicas**: Indicadores clave de rendimiento y análisis técnico
+- **Diseño Terminal**: Interfaz moderna inspirada en terminales financieras profesionales
 
-There are several ways of editing your application.
+## Tecnologías Utilizadas
 
-**Use Lovable**
+- **Frontend**: React + TypeScript
+- **Estilizado**: Tailwind CSS + shadcn/ui
+- **Build Tool**: Vite
+- **Estado**: Zustand (para gestión de estado)
+- **Routing**: React Router
+- **Componentes**: Componentes personalizados con diseño responsivo
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/7b12dd95-088e-4a46-800d-64872771d0fd) and start prompting.
+## Estructura del Proyecto
 
-Changes made via Lovable will be committed automatically to this repo.
+```
+src/
+├── components/
+│   ├── Analytics/       # Componentes de análisis
+│   ├── Dashboard/       # Componentes del dashboard
+│   ├── Layout/         # Componentes de estructura
+│   └── Auth/           # Componentes de autenticación
+├── pages/              # Páginas principales
+├── lib/               # Utilidades y configuraciones
+└── styles/            # Estilos globales
+```
 
-**Use your preferred IDE**
+## Instalación y Desarrollo
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+1. **Clonar el repositorio**:
+```bash
+git clone https://github.com/valtopia/undervalued-terminal-score.git
+cd undervalued-terminal-score
+```
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+2. **Instalar dependencias**:
+```bash
+npm install
+```
 
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+3. **Iniciar entorno de desarrollo**:
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+La aplicación estará disponible en `http://localhost:8080` (o el siguiente puerto disponible).
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## Características de Diseño
 
-**Use GitHub Codespaces**
+- **Diseño Responsivo**: Adaptación completa a diferentes tamaños de pantalla
+- **Scroll Horizontal**: Implementado en tablas y elementos que lo requieren
+- **Paleta de Colores**: Esquema profesional con énfasis en grises y acentos semánticos
+- **Componentes Modulares**: Diseño modular para fácil mantenimiento y escalabilidad
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## Contribución
 
-## What technologies are used for this project?
+Las contribuciones son bienvenidas. Por favor, asegúrate de:
 
-This project is built with:
+1. Hacer fork del repositorio
+2. Crear una rama para tu feature (`git checkout -b feature/AmazingFeature`)
+3. Commit de tus cambios (`git commit -m 'Add some AmazingFeature'`)
+4. Push a la rama (`git push origin feature/AmazingFeature`)
+5. Abrir un Pull Request
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## Licencia
 
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/7b12dd95-088e-4a46-800d-64872771d0fd) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más detalles.
