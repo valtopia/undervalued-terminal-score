@@ -1,10 +1,27 @@
 import React, { useState } from 'react';
-import { TrendingUp, TrendingDown, AlertCircle, Eye } from 'lucide-react';
+import { TrendingUp, TrendingDown, AlertCircle, Eye, Star, Bell, MoreHorizontal } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { StockDetailPanel } from './StockDetailPanel';
 import { Stock, StockDetail } from '@/types/stock';
 
-const mockStocks: Stock[] = [
+interface StockData {
+  symbol: string;
+  company: string;
+  price: number;
+  change: number;
+  changePercent: number;
+  uvScore: number;
+  undervalueScore: number;
+  pe: number;
+  marketCap: string;
+  sector: string;
+  rank: number;
+  name: string;
+  volume: string;
+  alerts: number;
+}
+
+const mockStocks: StockData[] = [
   {
     symbol: 'MSFT',
     company: 'Microsoft Corporation',
@@ -18,7 +35,8 @@ const mockStocks: Stock[] = [
     sector: 'Technology',
     rank: 1,
     name: 'Microsoft Corporation',
-    volume: '22.3M'
+    volume: '22.3M',
+    alerts: 0
   },
   {
     symbol: 'GOOGL',
@@ -33,7 +51,8 @@ const mockStocks: Stock[] = [
     sector: 'Technology',
     rank: 2,
     name: 'Alphabet Inc.',
-    volume: '22.3M'
+    volume: '22.3M',
+    alerts: 0
   },
   {
     symbol: 'BRK.B',
@@ -48,7 +67,8 @@ const mockStocks: Stock[] = [
     sector: 'Financial',
     rank: 3,
     name: 'Berkshire Hathaway Inc.',
-    volume: '22.3M'
+    volume: '22.3M',
+    alerts: 0
   },
   {
     symbol: 'JNJ',
@@ -63,7 +83,8 @@ const mockStocks: Stock[] = [
     sector: 'Healthcare',
     rank: 4,
     name: 'Johnson & Johnson',
-    volume: '22.3M'
+    volume: '22.3M',
+    alerts: 0
   },
   {
     symbol: 'V',
@@ -78,7 +99,8 @@ const mockStocks: Stock[] = [
     sector: 'Financial',
     rank: 5,
     name: 'Visa Inc.',
-    volume: '22.3M'
+    volume: '22.3M',
+    alerts: 0
   },
   {
     symbol: 'NVDA',
@@ -93,7 +115,8 @@ const mockStocks: Stock[] = [
     sector: 'Technology',
     rank: 6,
     name: 'NVIDIA Corporation',
-    volume: '35.1M'
+    volume: '35.1M',
+    alerts: 0
   },
   {
     symbol: 'JPM',
@@ -108,7 +131,8 @@ const mockStocks: Stock[] = [
     sector: 'Financial',
     rank: 7,
     name: 'JPMorgan Chase & Co.',
-    volume: '8.9M'
+    volume: '8.9M',
+    alerts: 0
   },
   {
     symbol: 'META',
@@ -123,7 +147,8 @@ const mockStocks: Stock[] = [
     sector: 'Technology',
     rank: 8,
     name: 'Meta Platforms Inc.',
-    volume: '18.7M'
+    volume: '18.7M',
+    alerts: 0
   },
   {
     symbol: 'TSM',
@@ -138,7 +163,8 @@ const mockStocks: Stock[] = [
     sector: 'Technology',
     rank: 9,
     name: 'Taiwan Semiconductor Manufacturing',
-    volume: '12.4M'
+    volume: '12.4M',
+    alerts: 0
   },
   {
     symbol: 'UNH',
@@ -153,7 +179,8 @@ const mockStocks: Stock[] = [
     sector: 'Healthcare',
     rank: 10,
     name: 'UnitedHealth Group Inc.',
-    volume: '3.2M'
+    volume: '3.2M',
+    alerts: 0
   }
 ];
 
@@ -398,183 +425,104 @@ const mockStockDetails: Record<string, StockDetail> = {
 };
 
 export const StockTable: React.FC = () => {
-  const [sortBy, setSortBy] = useState<keyof Stock>('rank');
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [selectedStock, setSelectedStock] = useState<string | null>(null);
+  const [sortColumn, setSortColumn] = useState<keyof StockData>('uvScore');
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
 
-  const handleSort = (column: keyof Stock) => {
-    if (sortBy === column) {
-      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+  const handleSort = (column: keyof StockData) => {
+    if (sortColumn === column) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
     } else {
-      setSortBy(column);
-      setSortOrder('asc');
+      setSortColumn(column);
+      setSortDirection('desc');
     }
   };
 
   const sortedStocks = [...mockStocks].sort((a, b) => {
-    const aVal = a[sortBy];
-    const bVal = b[sortBy];
-    const multiplier = sortOrder === 'asc' ? 1 : -1;
-    
-    if (typeof aVal === 'number' && typeof bVal === 'number') {
-      return (aVal - bVal) * multiplier;
+    const aValue = a[sortColumn];
+    const bValue = b[sortColumn];
+    if (typeof aValue === 'number' && typeof bValue === 'number') {
+      return sortDirection === 'asc' ? aValue - bValue : bValue - aValue;
     }
-    return String(aVal).localeCompare(String(bVal)) * multiplier;
+    return sortDirection === 'asc'
+      ? String(aValue).localeCompare(String(bValue))
+      : String(bValue).localeCompare(String(aValue));
   });
 
   return (
-    <>
-      <div className="max-w-6xl mx-auto px-2 py-8">
-        {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-terminal-green text-2xl font-mono tracking-tight">
-                UNDERVALUED STOCKS
-              </h2>
-              <div className="text-terminal-grey text-sm mt-1 font-mono">
-                Ranked by Proprietary Undervalue Score • Last updated: 09:30 EST
-              </div>
-            </div>
-            <div className="flex items-center space-x-2 text-xs font-mono">
-              <div className="px-3 py-1.5">
-                <span className="text-terminal-green">LIVE</span>
-              </div>
-              <div className="px-3 py-1.5">
-                <span className="text-terminal-amber">5 NEW</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Table */}
-        <div className="overflow-x-auto">
-          <table className="w-full font-mono text-sm">
-            <thead>
-              <tr>
-                {[
-                  { key: 'rank', label: 'RNK' },
-                  { key: 'symbol', label: 'SYMBOL' },
-                  { key: 'company', label: 'COMPANY' },
-                  { key: 'price', label: 'PRICE' },
-                  { key: 'change', label: 'CHANGE' },
-                  { key: 'undervalueScore', label: 'UV SCORE' },
-                  { key: 'pe', label: 'P/E' },
-                  { key: 'marketCap', label: 'MKT CAP' },
-                  { key: 'sector', label: 'SECTOR' }
-                ].map((header) => (
-                  <th
-                    key={header.key}
-                    className="py-2 text-left text-xs font-normal cursor-pointer hover:text-terminal-green transition-colors text-terminal-grey/70"
-                    onClick={() => handleSort(header.key as keyof Stock)}
-                  >
-                    <div className="flex items-center space-x-1">
-                      <span>{header.label}</span>
-                      {sortBy === header.key && (
-                        <span className="text-terminal-green ml-1">
-                          {sortOrder === 'asc' ? '↑' : '↓'}
-                        </span>
-                      )}
-                    </div>
-                  </th>
-                ))}
-                <th className="py-2 text-left text-xs font-normal text-terminal-grey/70">ACTION</th>
-              </tr>
-            </thead>
-            <tbody className="text-sm">
-              {sortedStocks.map((stock, index) => (
-                <tr
-                  key={stock.symbol}
-                  className="hover:bg-terminal-green/5 transition-colors cursor-pointer"
-                >
-                  <td className="py-2.5 text-terminal-amber font-medium">
-                    #{stock.rank}
-                  </td>
-                  <td className="py-2.5 text-terminal-green font-medium">
-                    {stock.symbol}
-                  </td>
-                  <td className="py-2.5 text-terminal-grey max-w-xs truncate">
-                    {stock.company}
-                  </td>
-                  <td className="py-2.5 text-terminal-green">
-                    ${stock.price.toFixed(2)}
-                  </td>
-                  <td className="py-2.5">
-                    <div className="flex items-center space-x-1">
-                      {stock.change >= 0 ? (
-                        <TrendingUp className="h-3 w-3 text-terminal-green" />
-                      ) : (
-                        <TrendingDown className="h-3 w-3 text-terminal-red" />
-                      )}
-                      <span className={stock.change >= 0 ? 'text-terminal-green' : 'text-terminal-red'}>
-                        {stock.change >= 0 ? '+' : ''}{stock.change.toFixed(2)}
-                      </span>
-                      <span className={cn(
-                        'text-xs',
-                        stock.change >= 0 ? 'text-terminal-green/70' : 'text-terminal-red/70'
-                      )}>
-                        ({stock.changePercent >= 0 ? '+' : ''}{stock.changePercent.toFixed(2)}%)
-                      </span>
-                    </div>
-                  </td>
-                  <td className="py-2.5">
-                    <div className="flex items-center space-x-2">
-                      <span className="text-terminal-amber font-medium">
-                        {stock.undervalueScore.toFixed(1)}
-                      </span>
-                      {stock.undervalueScore >= 8.0 && (
-                        <AlertCircle className="h-3 w-3 text-terminal-red animate-pulse" />
-                      )}
-                    </div>
-                  </td>
-                  <td className="py-2.5 text-terminal-grey">
-                    {stock.pe.toFixed(1)}
-                  </td>
-                  <td className="py-2.5 text-terminal-grey">
-                    ${stock.marketCap}
-                  </td>
-                  <td className="py-2.5 text-terminal-grey">
-                    {stock.sector}
-                  </td>
-                  <td className="py-2.5">
-                    <button
-                      onClick={() => setSelectedStock(stock.symbol)}
-                      className="text-terminal-green hover:text-terminal-green/80 transition-colors text-xs flex items-center"
-                    >
-                      <Eye className="h-4 w-4 mr-1" />
-                      VIEW
+    <div className="w-full bg-black/30 rounded-lg border border-terminal-grey/20">
+      <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-terminal-grey/20 scrollbar-track-transparent">
+        <table className="w-full min-w-[800px]">
+          <thead>
+            <tr className="border-b border-terminal-grey/20">
+              <th className="p-3 text-left text-xs font-mono text-terminal-grey/70">SYMBOL</th>
+              <th className="p-3 text-left text-xs font-mono text-terminal-grey/70">COMPANY</th>
+              <th className="p-3 text-right text-xs font-mono text-terminal-grey/70">PRICE</th>
+              <th className="p-3 text-right text-xs font-mono text-terminal-grey/70">CHANGE</th>
+              <th className="p-3 text-right text-xs font-mono text-terminal-grey/70">UV SCORE</th>
+              <th className="p-3 text-right text-xs font-mono text-terminal-grey/70">VOLUME</th>
+              <th className="p-3 text-center text-xs font-mono text-terminal-grey/70">ACTIONS</th>
+            </tr>
+          </thead>
+          <tbody>
+            {sortedStocks.map((stock) => (
+              <tr 
+                key={stock.symbol}
+                className="border-b border-terminal-grey/10 hover:bg-terminal-grey/5 cursor-pointer"
+                onClick={() => setSelectedStock(stock.symbol)}
+              >
+                <td className="p-3">
+                  <div className="font-mono text-terminal-grey">{stock.symbol}</div>
+                </td>
+                <td className="p-3">
+                  <div className="font-mono text-terminal-grey/70">{stock.company}</div>
+                </td>
+                <td className="p-3 text-right">
+                  <div className="font-mono text-terminal-grey">${stock.price.toFixed(2)}</div>
+                </td>
+                <td className="p-3 text-right">
+                  <div className={cn(
+                    "font-mono flex items-center justify-end gap-1",
+                    stock.change > 0 ? "text-terminal-green" : "text-terminal-red"
+                  )}>
+                    {stock.change > 0 ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
+                    {Math.abs(stock.change).toFixed(2)}%
+                  </div>
+                </td>
+                <td className="p-3 text-right">
+                  <div className="font-mono text-terminal-grey">{stock.uvScore.toFixed(1)}</div>
+                </td>
+                <td className="p-3 text-right">
+                  <div className="font-mono text-terminal-grey/70">{stock.volume}</div>
+                </td>
+                <td className="p-3">
+                  <div className="flex items-center justify-center gap-2">
+                    <button className="p-1 hover:bg-terminal-grey/10 rounded">
+                      <Star className="h-4 w-4 text-terminal-grey/50" />
                     </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Footer */}
-        <div className="mt-8 flex justify-between items-center text-xs text-terminal-grey/70 font-mono">
-          <div>
-            SHOWING {sortedStocks.length} OF 147 TRACKED SECURITIES
-          </div>
-          <div className="flex items-center space-x-4">
-            <span>PAGE 1 OF 30</span>
-            <div className="flex space-x-1">
-              <button className="px-3 py-1.5 hover:text-terminal-green transition-colors">
-                ‹
-              </button>
-              <button className="px-3 py-1.5 hover:text-terminal-green transition-colors">
-                ›
-              </button>
-            </div>
-          </div>
-        </div>
+                    <button className="p-1 hover:bg-terminal-grey/10 rounded">
+                      <Bell className="h-4 w-4 text-terminal-grey/50" />
+                    </button>
+                    <button className="p-1 hover:bg-terminal-grey/10 rounded">
+                      <MoreHorizontal className="h-4 w-4 text-terminal-grey/50" />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
-
-      <StockDetailPanel
-        isOpen={!!selectedStock}
-        onClose={() => setSelectedStock(null)}
-        stockData={selectedStock ? mockStockDetails[selectedStock] : undefined}
-      />
-    </>
+      
+      {selectedStock && (
+        <div className="p-4 border-t border-terminal-grey/20">
+          <StockDetailPanel 
+            isOpen={true}
+            onClose={() => setSelectedStock(null)}
+            stockData={mockStockDetails[selectedStock]}
+          />
+        </div>
+      )}
+    </div>
   );
 };

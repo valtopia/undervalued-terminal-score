@@ -10,7 +10,7 @@ import {
   Search,
   CreditCard,
   Info,
-  Briefcase,
+  Bitcoin,
   LineChart,
 } from 'lucide-react';
 import {
@@ -98,11 +98,11 @@ export function AppSidebar() {
           <SidebarMenuItem>
             <SidebarMenuButton
               asChild
-              isActive={location.pathname === "/portfolio"}
-              tooltip="Portfolio"
+              isActive={location.pathname === "/crypto"}
+              tooltip="Crypto"
             >
-              <Link to="/portfolio" className="flex items-center justify-center">
-                <Briefcase className="h-5 w-5" />
+              <Link to="/crypto" className="flex items-center justify-center">
+                <Bitcoin className="h-5 w-5" />
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>

@@ -12,27 +12,38 @@ import {
   Pie,
   Cell
 } from 'recharts';
-import { TrendingUp, AlertCircle, Activity } from 'lucide-react';
+import { TrendingUp, TrendingDown, AlertCircle, DollarSign, Target, Activity } from 'lucide-react';
 
-// Mock data for portfolio performance
-const performanceData = [
-  { date: '2023-10', portfolio: 100, sp500: 100 },
-  { date: '2023-11', portfolio: 105.2, sp500: 102.8 },
-  { date: '2023-12', portfolio: 112.4, sp500: 105.6 },
-  { date: '2024-01', portfolio: 118.7, sp500: 108.9 },
-  { date: '2024-02', portfolio: 124.5, sp500: 111.2 },
-  { date: '2024-03', portfolio: 131.8, sp500: 114.5 }
-];
+interface PortfolioStock {
+  symbol: string;
+  name: string;
+  shares: number;
+  purchasePrice: number;
+  currentPrice: number;
+  performance: {
+    daily: number;
+    weekly: number;
+    monthly: number;
+    yearly: number;
+    ytd: number;
+  };
+  metrics: {
+    peRatio: number;
+    marketCap: number;
+    volume: number;
+    beta: number;
+  };
+  scoreComponents: {
+    fundamentals: number;
+    technical: number;
+    sentiment: number;
+    risk: number;
+  };
+}
 
-// Mock data for asset contribution
-const contributionData = [
-  { name: 'MSFT', value: 25.4 },
-  { name: 'GOOGL', value: 18.7 },
-  { name: 'AAPL', value: 15.2 },
-  { name: 'NVDA', value: 12.8 },
-  { name: 'META', value: 10.5 },
-  { name: 'Others', value: 17.4 }
-];
+interface PortfolioAnalysisProps {
+  portfolio: PortfolioStock[];
+}
 
 const COLORS = ['#00FF41', '#FFBE00', '#FF073A', '#00B4D8', '#9B4DCA', '#666666'];
 
@@ -86,151 +97,134 @@ const activeAlerts = [
   }
 ];
 
-export const PortfolioAnalysis: React.FC = () => {
+export const PortfolioAnalysis: React.FC<PortfolioAnalysisProps> = ({ portfolio }) => {
+  const getScoreColor = (score: number) => {
+    if (score >= 8.5) return 'text-terminal-green';
+    if (score >= 7) return 'text-terminal-yellow';
+    return 'text-terminal-red';
+  };
+
+  const getPerformanceColor = (value: number) => {
+    return value >= 0 ? 'text-terminal-green' : 'text-terminal-red';
+  };
+
+  const renderScoreBar = (value: number) => (
+    <div className="flex items-center gap-2">
+      <div className="flex-1 h-1 bg-black/30 rounded">
+        <div 
+          className="h-full bg-terminal-green rounded"
+          style={{ width: `${value * 10}%` }}
+        />
+      </div>
+      <span className={getScoreColor(value)}>{value.toFixed(1)}</span>
+    </div>
+  );
+
   return (
-    <div className="space-y-6">
-      {/* Performance Chart */}
-      <div className="bg-black border border-terminal-green/30 rounded-lg p-6">
-        <h3 className="text-terminal-green font-mono mb-4 flex items-center">
-          <TrendingUp className="h-4 w-4 mr-2" />
-          PORTFOLIO VS S&P 500
-        </h3>
-        <div className="h-[300px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={performanceData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(0, 255, 65, 0.1)" />
-              <XAxis dataKey="date" stroke="#00FF41" />
-              <YAxis stroke="#00FF41" />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: '#000',
-                  border: '1px solid rgba(0, 255, 65, 0.3)',
-                  color: '#00FF41'
-                }}
-              />
-              <Legend />
-              <Line
-                type="monotone"
-                dataKey="portfolio"
-                stroke="#00FF41"
-                name="Portfolio"
-                strokeWidth={2}
-              />
-              <Line
-                type="monotone"
-                dataKey="sp500"
-                stroke="#FFBE00"
-                name="S&P 500"
-                strokeWidth={2}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Asset Contribution */}
-        <div className="bg-black border border-terminal-green/30 rounded-lg p-6">
-          <h3 className="text-terminal-green font-mono mb-4">CONTRIBUTION BY ASSET</h3>
-          <div className="h-[300px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={contributionData}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  outerRadius={100}
-                  fill="#00FF41"
-                  dataKey="value"
-                  label={({ name, value }) => `${name} (${value}%)`}
-                >
-                  {contributionData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: '#000',
-                    border: '1px solid rgba(0, 255, 65, 0.3)',
-                    color: '#00FF41'
-                  }}
-                />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
-        {/* Status Changes */}
-        <div className="bg-black border border-terminal-green/30 rounded-lg p-6">
-          <h3 className="text-terminal-green font-mono mb-4 flex items-center">
-            <Activity className="h-4 w-4 mr-2" />
-            STATUS CHANGES
-          </h3>
-          <div className="space-y-4">
-            {statusChanges.map((change) => (
-              <div
-                key={change.symbol}
-                className="flex items-center justify-between p-3 border border-terminal-green/20 rounded"
-              >
-                <div className="flex items-center space-x-4">
-                  <span className="text-terminal-amber font-bold">{change.symbol}</span>
-                  <span className={`text-xs px-2 py-1 rounded ${
-                    change.change === 'undervalued'
-                      ? 'bg-terminal-green/20 text-terminal-green'
-                      : 'bg-terminal-red/20 text-terminal-red'
-                  }`}>
-                    {change.change.toUpperCase()}
-                  </span>
-                </div>
-                <div className="text-terminal-grey text-sm">
-                  Score: <span className="text-terminal-green">{change.score}</span>
-                </div>
-                <div className="text-terminal-grey text-sm">
-                  Price: <span className="text-terminal-green">{change.price}</span>
-                </div>
-                <div className="text-terminal-grey text-xs">{change.date}</div>
+    <div className="space-y-8">
+      {portfolio.map(stock => (
+        <div key={stock.symbol} className="bg-black/20 border border-terminal-green/20 rounded-lg p-8">
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h3 className="text-2xl font-mono text-terminal-green">{stock.symbol}</h3>
+              <p className="text-terminal-grey mt-1">{stock.name}</p>
+            </div>
+            <div className="text-right">
+              <div className="text-2xl font-mono text-terminal-green">${stock.currentPrice.toFixed(2)}</div>
+              <div className={`text-sm mt-1 ${stock.performance.daily >= 0 ? 'text-terminal-green' : 'text-terminal-red'}`}>
+                {stock.performance.daily >= 0 ? '+' : ''}{stock.performance.daily}% hoy
               </div>
-            ))}
+            </div>
           </div>
-        </div>
 
-        {/* Active Alerts */}
-        <div className="bg-black border border-terminal-green/30 rounded-lg p-6 lg:col-span-2">
-          <h3 className="text-terminal-green font-mono mb-4 flex items-center">
-            <AlertCircle className="h-4 w-4 mr-2" />
-            ACTIVE ALERTS
-          </h3>
-          <div className="space-y-4">
-            {activeAlerts.map((alert) => (
-              <div
-                key={alert.symbol}
-                className="flex items-center justify-between p-3 border border-terminal-green/20 rounded"
-              >
-                <div className="flex items-center space-x-4">
-                  <span className="text-terminal-amber font-bold">{alert.symbol}</span>
-                  <span className="text-xs text-terminal-grey">{alert.type.replace('_', ' ').toUpperCase()}</span>
-                </div>
-                <div className="flex-1 max-w-md mx-8">
-                  <div className="flex justify-between text-xs text-terminal-grey mb-1">
-                    <span>Current: {alert.current}</span>
-                    <span>Target: {alert.target}</span>
-                  </div>
-                  <div className="h-2 bg-terminal-green/20 rounded">
-                    <div
-                      className="h-full bg-terminal-amber rounded"
-                      style={{ width: `${alert.progress}%` }}
-                    />
+          <div className="grid grid-cols-3 gap-8">
+            {/* UV Score Components */}
+            <div className="col-span-1 space-y-6">
+              <h4 className="text-terminal-green/70 text-lg mb-4">UV SCORE COMPONENTS</h4>
+              <div className="space-y-4">
+                <div>
+                  <div className="flex justify-between mb-2">
+                    <span className="text-terminal-grey">Fundamentals</span>
+                    {renderScoreBar(stock.scoreComponents.fundamentals)}
                   </div>
                 </div>
-                <div className="text-terminal-green text-sm font-mono">
-                  {alert.progress}%
+                <div>
+                  <div className="flex justify-between mb-2">
+                    <span className="text-terminal-grey">Technical</span>
+                    {renderScoreBar(stock.scoreComponents.technical)}
+                  </div>
+                </div>
+                <div>
+                  <div className="flex justify-between mb-2">
+                    <span className="text-terminal-grey">Sentiment</span>
+                    {renderScoreBar(stock.scoreComponents.sentiment)}
+                  </div>
+                </div>
+                <div>
+                  <div className="flex justify-between mb-2">
+                    <span className="text-terminal-grey">Risk</span>
+                    {renderScoreBar(stock.scoreComponents.risk)}
+                  </div>
                 </div>
               </div>
-            ))}
+            </div>
+
+            {/* Performance Metrics */}
+            <div className="col-span-1 space-y-6">
+              <h4 className="text-terminal-green/70 text-lg mb-4">PERFORMANCE METRICS</h4>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="p-4 bg-black/30 rounded border border-terminal-green/10">
+                  <div className="text-terminal-grey text-sm mb-2">Daily</div>
+                  <div className={`text-xl font-bold ${getPerformanceColor(stock.performance.daily)}`}>
+                    {stock.performance.daily > 0 ? '+' : ''}{stock.performance.daily}%
+                  </div>
+                </div>
+                <div className="p-4 bg-black/30 rounded border border-terminal-green/10">
+                  <div className="text-terminal-grey text-sm mb-2">Weekly</div>
+                  <div className={`text-xl font-bold ${getPerformanceColor(stock.performance.weekly)}`}>
+                    {stock.performance.weekly > 0 ? '+' : ''}{stock.performance.weekly}%
+                  </div>
+                </div>
+                <div className="p-4 bg-black/30 rounded border border-terminal-green/10">
+                  <div className="text-terminal-grey text-sm mb-2">Monthly</div>
+                  <div className={`text-xl font-bold ${getPerformanceColor(stock.performance.monthly)}`}>
+                    {stock.performance.monthly > 0 ? '+' : ''}{stock.performance.monthly}%
+                  </div>
+                </div>
+                <div className="p-4 bg-black/30 rounded border border-terminal-green/10">
+                  <div className="text-terminal-grey text-sm mb-2">Yearly</div>
+                  <div className={`text-xl font-bold ${getPerformanceColor(stock.performance.yearly)}`}>
+                    {stock.performance.yearly > 0 ? '+' : ''}{stock.performance.yearly}%
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Key Metrics */}
+            <div className="col-span-1 space-y-6">
+              <h4 className="text-terminal-green/70 text-lg mb-4">KEY METRICS</h4>
+              <div className="space-y-4">
+                <div className="flex justify-between items-center p-3 bg-black/30 rounded border border-terminal-green/10">
+                  <span className="text-terminal-grey">P/E Ratio</span>
+                  <span className="text-terminal-green text-lg">{stock.metrics.peRatio.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between items-center p-3 bg-black/30 rounded border border-terminal-green/10">
+                  <span className="text-terminal-grey">Market Cap</span>
+                  <span className="text-terminal-green text-lg">${(stock.metrics.marketCap / 1e9).toFixed(2)}B</span>
+                </div>
+                <div className="flex justify-between items-center p-3 bg-black/30 rounded border border-terminal-green/10">
+                  <span className="text-terminal-grey">Volume</span>
+                  <span className="text-terminal-green text-lg">{(stock.metrics.volume / 1e6).toFixed(1)}M</span>
+                </div>
+                <div className="flex justify-between items-center p-3 bg-black/30 rounded border border-terminal-green/10">
+                  <span className="text-terminal-grey">Beta</span>
+                  <span className="text-terminal-green text-lg">{stock.metrics.beta.toFixed(2)}</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+      ))}
     </div>
   );
 }; 

@@ -9,15 +9,15 @@ const MainLayoutContent: React.FC<{ children: React.ReactNode }> = ({ children }
   const { isMobile, openMobile, setOpenMobile } = useSidebar();
 
   return (
-    <div className="relative flex min-h-screen bg-black text-terminal-green">
+    <div className="relative flex min-h-screen w-full bg-black text-terminal-grey">
       {/* Mobile Menu Button */}
       {isMobile && (
         <button
           onClick={() => setOpenMobile(true)}
-          className="fixed top-4 left-4 z-50 p-2 bg-black border border-terminal-green/30 
-                   rounded-md hover:bg-terminal-green/10 transition-colors md:hidden"
+          className="fixed top-4 left-4 z-50 p-2 bg-black border border-terminal-grey/30 
+                   rounded-md hover:bg-terminal-grey/10 transition-colors md:hidden"
         >
-          <Menu className="h-5 w-5 text-terminal-green" />
+          <Menu className="h-5 w-5 text-terminal-grey" />
         </button>
       )}
 
@@ -26,15 +26,15 @@ const MainLayoutContent: React.FC<{ children: React.ReactNode }> = ({ children }
 
       {/* Main Content */}
       <main className={cn(
-        "flex-1 min-h-screen",
-        isMobile ? "ml-0" : "ml-[70px]",
+        "flex-1 min-h-screen w-[calc(100%-var(--sidebar-width))]",
+        isMobile && "w-full",
         "flex flex-col"
       )}>
         <Header isMobile={isMobile} className="py-2" />
         <div className={cn(
-          "flex-1 flex flex-col items-center",
-          "w-full max-w-7xl mx-auto",
-          "px-4 sm:px-6 lg:px-8",
+          "flex-1 flex flex-col",
+          "w-full",
+          "px-4 md:px-8",
           "pt-2"
         )}>
           {children}

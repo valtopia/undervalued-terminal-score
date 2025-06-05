@@ -13,10 +13,11 @@ import Screener from "@/pages/Screener";
 import Pricing from "@/pages/Pricing";
 import Settings from "@/pages/Settings";
 import About from "@/pages/About";
-import Portfolio from "@/pages/Portfolio";
+import Crypto from "@/pages/Crypto";
 import Alerts from "@/pages/Alerts";
 import StockAnalysis from "@/pages/StockAnalysis";
 import NotFound from "@/pages/NotFound";
+import { ProtectedRoute } from '@/components/Auth/ProtectedRoute';
 
 const queryClient = new QueryClient();
 
@@ -37,14 +38,14 @@ const App = () => (
                     <AppSidebar />
                     <main className="flex-1">
                       <Routes>
-                        <Route path="/dashboard" element={<Dashboard />} />
-                        <Route path="/analytics" element={<Analytics />} />
+                        <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+                        <Route path="/analytics" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
                         <Route path="/alerts" element={<Alerts />} />
-                        <Route path="/screener" element={<Screener />} />
-                        <Route path="/pricing" element={<Pricing />} />
-                        <Route path="/settings" element={<Settings />} />
-                        <Route path="/about" element={<About />} />
-                        <Route path="/portfolio" element={<Portfolio />} />
+                        <Route path="/screener" element={<ProtectedRoute><Screener /></ProtectedRoute>} />
+                        <Route path="/pricing" element={<ProtectedRoute><Pricing /></ProtectedRoute>} />
+                        <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+                        <Route path="/about" element={<ProtectedRoute><About /></ProtectedRoute>} />
+                        <Route path="/crypto" element={<Crypto />} />
                         <Route path="/stock/:symbol" element={<StockAnalysis />} />
                         <Route path="*" element={<NotFound />} />
                       </Routes>

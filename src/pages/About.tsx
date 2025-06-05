@@ -1,86 +1,112 @@
 import React from 'react';
-import { Terminal, Code2, Cpu, LineChart } from 'lucide-react';
+import { Info, Star, Heart, Code } from 'lucide-react';
+import { SystemInfoBar } from '@/components/Layout';
+
+// Mock data for about metrics
+const aboutMetrics = {
+  version: "2.1.4",
+  contributors: "12",
+  stars: "1.2K",
+  uptime: "99.9"
+};
 
 export default function About() {
   return (
-    <div className="p-8">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-mono text-terminal-green mb-8">ABOUT VALTOPIA</h1>
-        
-        <div className="space-y-12">
-          {/* Mission Section */}
-          <section className="space-y-4">
-            <h2 className="text-xl font-mono text-terminal-green flex items-center gap-2">
-              <Terminal className="h-5 w-5" />
-              MISSION
-            </h2>
-            <p className="text-terminal-grey font-mono leading-relaxed">
-              Valtopia nació de una simple pero poderosa idea: democratizar el análisis financiero avanzado. 
-              Nuestra misión es proporcionar a inversores de todos los niveles las herramientas y análisis 
-              que tradicionalmente solo estaban disponibles para instituciones financieras.
-            </p>
-          </section>
+    <div className="h-screen bg-black text-terminal-green flex flex-col">
+      <SystemInfoBar 
+        version="VALTOPIA ABOUT v1.0.0"
+        customStatus="STATIC"
+        customDelay="N/A"
+      />
 
-          {/* Technology Section */}
-          <section className="space-y-4">
-            <h2 className="text-xl font-mono text-terminal-green flex items-center gap-2">
-              <Cpu className="h-5 w-5" />
-              TECHNOLOGY
-            </h2>
-            <p className="text-terminal-grey font-mono leading-relaxed">
-              Utilizamos algoritmos de aprendizaje automático y análisis cuantitativo avanzado para evaluar 
-              más de 10,000 acciones en tiempo real. Nuestro sistema procesa millones de puntos de datos 
-              diariamente para calcular nuestro indicador propietario "Undervalue Score".
-            </p>
-          </section>
-
-          {/* Methodology Section */}
-          <section className="space-y-4">
-            <h2 className="text-xl font-mono text-terminal-green flex items-center gap-2">
-              <Code2 className="h-5 w-5" />
-              METHODOLOGY
-            </h2>
-            <p className="text-terminal-grey font-mono leading-relaxed">
-              El Undervalue Score combina más de 50 métricas financieras diferentes, incluyendo:
-            </p>
-            <ul className="list-disc list-inside text-terminal-grey font-mono space-y-2 pl-4">
-              <li>Análisis fundamental profundo</li>
-              <li>Indicadores técnicos avanzados</li>
-              <li>Sentimiento del mercado y análisis de noticias</li>
-              <li>Métricas de momentum y volatilidad</li>
-              <li>Patrones de flujo de capital institucional</li>
-            </ul>
-          </section>
-
-          {/* Stats Section */}
-          <section className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
-            <div className="bg-sidebar p-6 rounded-lg">
-              <h3 className="text-terminal-green font-mono text-3xl mb-2">10K+</h3>
-              <p className="text-terminal-grey font-mono text-sm">Acciones Analizadas</p>
+      <div className="flex-1 flex flex-col w-full px-4 py-4">
+        <div className="grid grid-cols-2 gap-3 mb-3">
+          {/* Version Info */}
+          <div className="bg-black/30 p-2 rounded-lg border border-terminal-green/10">
+            <div className="flex items-center gap-2 mb-1">
+              <Info className="h-3 w-3 text-terminal-grey" />
+              <h2 className="text-sm font-mono text-terminal-grey">VERSION</h2>
             </div>
-            <div className="bg-sidebar p-6 rounded-lg">
-              <h3 className="text-terminal-green font-mono text-3xl mb-2">99.9%</h3>
-              <p className="text-terminal-grey font-mono text-sm">Tiempo de Actividad</p>
+            <div className="text-xl font-mono text-terminal-grey">v{aboutMetrics.version}</div>
+            <div className="text-[10px] text-terminal-grey/70 font-mono">Current Version</div>
+            <div className="grid grid-cols-2 gap-3 mt-1">
+              <div>
+                <div className="text-[10px] text-terminal-grey/70 font-mono">Contributors</div>
+                <div className="text-sm font-mono text-terminal-grey">{aboutMetrics.contributors}</div>
+              </div>
+              <div>
+                <div className="text-[10px] text-terminal-grey/70 font-mono">Stars</div>
+                <div className="text-sm font-mono text-terminal-grey">{aboutMetrics.stars}</div>
+              </div>
             </div>
-            <div className="bg-sidebar p-6 rounded-lg">
-              <h3 className="text-terminal-green font-mono text-3xl mb-2">50M+</h3>
-              <p className="text-terminal-grey font-mono text-sm">Datos Procesados/Día</p>
-            </div>
-          </section>
+          </div>
 
-          {/* Performance Section */}
-          <section className="space-y-4">
-            <h2 className="text-xl font-mono text-terminal-green flex items-center gap-2">
-              <LineChart className="h-5 w-5" />
-              PERFORMANCE
-            </h2>
-            <p className="text-terminal-grey font-mono leading-relaxed">
-              Las acciones con un Undervalue Score superior a 8.0 han superado consistentemente al S&P 500 
-              en un 12.3% anualizado desde nuestro lanzamiento. Nuestro compromiso con la precisión y la 
-              transparencia nos ha convertido en la plataforma de confianza para más de 50,000 inversores 
-              activos.
-            </p>
-          </section>
+          {/* System Info */}
+          <div className="bg-black/30 p-2 rounded-lg border border-terminal-green/10">
+            <div className="flex items-center gap-2 mb-1">
+              <Star className="h-3 w-3 text-terminal-grey" />
+              <h2 className="text-sm font-mono text-terminal-grey">SYSTEM</h2>
+            </div>
+            <div className="text-xl font-mono text-terminal-grey">{aboutMetrics.uptime}%</div>
+            <div className="text-[10px] text-terminal-grey/70 font-mono">System Uptime</div>
+            <div className="grid grid-cols-2 gap-3 mt-1">
+              <div>
+                <div className="text-[10px] text-terminal-grey/70 font-mono">Status</div>
+                <div className="text-sm font-mono text-terminal-grey">Online</div>
+              </div>
+              <div>
+                <div className="text-[10px] text-terminal-grey/70 font-mono">Health</div>
+                <div className="text-sm font-mono text-terminal-grey">Optimal</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex-1 grid grid-cols-12 gap-4">
+          {/* About Section */}
+          <div className="col-span-6 bg-black/30 p-4 rounded-lg border border-terminal-green/10">
+            <div className="flex items-center gap-2 mb-3">
+              <Heart className="h-4 w-4 text-terminal-grey" />
+              <h2 className="text-lg font-mono text-terminal-grey">ABOUT</h2>
+            </div>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <div className="text-sm font-mono text-terminal-grey">About Valtopia</div>
+                <div className="text-xs text-terminal-grey/70">
+                  Valtopia is a cutting-edge financial analysis platform designed to help investors identify undervalued assets in the market. Our advanced algorithms and real-time data processing capabilities provide users with accurate and timely insights for making informed investment decisions.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Tech Stack */}
+          <div className="col-span-6 bg-black/30 p-4 rounded-lg border border-terminal-green/10">
+            <div className="flex items-center gap-2 mb-3">
+              <Code className="h-4 w-4 text-terminal-grey" />
+              <h2 className="text-lg font-mono text-terminal-grey">TECH STACK</h2>
+            </div>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <div className="text-sm font-mono text-terminal-grey">Technologies Used</div>
+                <div className="text-xs text-terminal-grey/70">
+                  Built with React, TypeScript, and Tailwind CSS. Powered by advanced algorithms and real-time data processing capabilities.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Footer Status */}
+        <div className="mt-3 pt-2 border-t border-terminal-green/10 text-[10px] text-terminal-grey/70 font-mono">
+          <div className="flex justify-between items-center">
+            <div>
+              About Engine v1.0.0 • Version: {aboutMetrics.version} • Uptime: {aboutMetrics.uptime}%
+            </div>
+            <div className="flex items-center space-x-4">
+              <span>Status: Online</span>
+              <span className="text-terminal-green">OPTIMAL</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
